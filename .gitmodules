@@ -1,0 +1,6 @@
+[submodule "yaml-mode"]
+	path = yaml-mode
+	url = https://github.com/yoshiki/yaml-mode
+[submodule "rosemacs"]
+	path = rosemacs
+	url = https://kforge.ros.org/rosemacs/git

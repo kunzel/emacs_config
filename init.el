@@ -202,12 +202,20 @@
 (require 'ido)
 (ido-mode t)
 
+
 ; rosemacs
-(add-to-list 'load-path "/opt/ros/electric/ros/tools/rosemacs")
+(push "~/.emacs.d/rosemacs" load-path)
 (require 'rosemacs)
 (invoke-rosemacs)
 (global-set-key "\C-x\C-r" ros-keymap)
 ;;(set-ros-topic-update-interval 5)
+;; (:eval (ros-current-pkg-modeline-entry))
+
+(add-to-list 'load-path "~/.emacs.d/yaml-mode")
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+
 
 ; slime / lisp Setup
 ;(setq inferior-lisp-program "/usr/bin/sbcl") ; your Lisp system
@@ -266,7 +274,7 @@
       (match-string 1))))
 
 (add-to-list 'load-path (ros-package-path "rosemacs"))
-(add-to-list 'load-path (concat (ros-package-path "cram_emacs_repl") "/slime"))
+;; (add-to-list 'load-path (concat (ros-package-path "cram_emacs_repl") "/slime"))
 
 (setq default-tab-width 2)
 (global-font-lock-mode t)
@@ -286,16 +294,16 @@
                 ("\\.launch"   . xml-mode)) auto-mode-alist))
 (autoload 'mwheel-install "mwheel" "Enable mouse wheel support.")
 
-(require 'slime)
+;; (require 'slime)
 
 (require 'rosemacs)
 (invoke-rosemacs)
 (global-set-key "\C-x\C-r" ros-keymap)
 
-(slime-setup '(slime-fancy slime-asdf slime-indentation slime-ros))
-(setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
+;; (slime-setup '(slime-fancy slime-asdf slime-indentation slime-ros))
+;; (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
 
-(setq slime-multiprocessing t)
+;; (setq slime-multiprocessing t)
 
 ;(slime-ros)
 
