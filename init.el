@@ -1,7 +1,8 @@
 ;-*-Lisp-*-
-
 ;start emacs server
 ;(server-start)
+
+(menu-bar-mode -1)
 
 (add-to-list 'load-path "~/.emacs.d/site/")
 
@@ -38,7 +39,7 @@
  '(ido-default-buffer-method (quote samewindow))
  '(ido-default-file-method (quote samewindow))
  '(ispell-local-dictionary "american")
- '(ispell-program-name "ispell")
+ '(ispell-program-name "aspell")
  '(js-indent-level 2)
  '(kept-new-versions 3)
  '(kept-old-versions 3)
@@ -59,33 +60,24 @@
  '(whitespace-modes (quote (ada-mode asm-mode autoconf-mode awk-mode c-mode c++-mode cc-mode change-log-mode cperl-mode electric-nroff-mode emacs-lisp-mode f90-mode fortran-mode html-mode html3-mode java-mode jde-mode ksh-mode nil LaTeX-mode lisp-mode m4-mode makefile-mode modula-2-mode nroff-mode objc-mode pascal-mode perl-mode prolog-mode python-mode scheme-mode sgml-mode sh-mode shell-script-mode simula-mode tcl-mode tex-mode texinfo-mode vrml-mode xml-mode))))
 
 
-;;(TeX-PDF-mode t)
-;;(ido-everywhere t)
-;;(ido-mode (quote both) nil (ido))
-;;(iswitchb-mode t)
-;;(line-number-mode t)
-;;(load-home-init-file t t)
-;;(next-line-add-newlines nil)
-;;(paren-mode (quote paren) nil (paren))
-;;(pc-select-meta-moves-sexps t)
-;;(pc-select-selection-keys-only t)
-;;(pc-selection-mode t nil (pc-select))
-;;(ros-completion-function (quote ido-completing-read))
-;;(transient-mark-mode t))
+(add-to-list 'load-path "~/.emacs.d/yaml-mode")
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
 
-
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
 
 (autoload 'c++-mode  "cc-mode" "C++ Editing Mode" t)
 (autoload 'c-mode    "cc-mode" "C Editing Mode"   t)
 (autoload 'objc-mode "cc-mode" "Objective C Editing Mode" t)
 (autoload 'text-mode "indented-text-mode" "Indented Text Editing Mode" t)
 (autoload 'xrdb-mode "xrdb-mode" "Mode for editing X resource files" t)
+
+; prolog
+(setq auto-mode-alist
+  (cons (cons "\\.pl" 'prolog-mode)
+     auto-mode-alist))
+
+
 (setq auto-mode-alist
       (append '(("\\.C$"       . c++-mode)
                 ("\\.cc$"      . c++-mode)
@@ -144,64 +136,30 @@
   "Copy a rectangular region to the kill ring." t)
 
 
-
-(when (fboundp 'windmove-default-keybindings)
-  (windmove-default-keybindings 'meta))
-;;(require 'windmove)
-;;(windmove-default-keybindings)
-;(setq windmove-wrap-around t)
-;(global-set-key "\M-down" 'windmove-down)
-;;(global-set-key "\M-up" 'windmove-up)
-;(global-set-key "\M-right" 'windmove-right)
-;(global-set-key "\M-left" 'windmove-left)
-
-
-;; Mouse wheel
-;;(autoload 'mwheel-install "mwheel" "Enable mouse wheel support.") (mwheel-install)
-
 ;; Load auctex
 (load "auctex")
-
 
 ;; Flyspell mode
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (flyspell-mode 1))))
 (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
   (add-hook hook (lambda () (flyspell-mode -1))))
-
-;;(setq flyspell-default-dictionary "american")
+(dolist (hook '(lisp-mode-hook c++-mode-hook python-mode-hook))
+  (add-hook hook (lambda () (flyspell-prog-mode))))
 
 ;; Set ispell default dictionary
 (ispell-change-dictionary "american")
 
-;; winner-mode to remember window config
-;;(require 'winner)
-;;(winner-mode)
-
-;; numbered windows
-;;(require 'window-number)
-;;(window-number-mode)
-
-
 ; color scheme
 (require 'color-theme)
-;;(color-theme-initialize)
-;;(load-file "~/.emacs.d/themes/color-theme-blackboard.el")
-;;(color-theme-blackboard)
-(load-file "~/.emacs.d/themes/zenburn-theme.el")
-;;(color-theme-gray30)
+(color-theme-initialize)
+(color-theme-gray30)
 ;;(color-theme-hober)
 
-
-; prolog
-(setq auto-mode-alist
-  (cons (cons "\\.pl" 'prolog-mode)
-     auto-mode-alist))
 
 ; ido mode
 (require 'ido)
 (ido-mode t)
-
 
 ; rosemacs
 (push "~/.emacs.d/rosemacs" load-path)
@@ -211,18 +169,6 @@
 ;;(set-ros-topic-update-interval 5)
 ;; (:eval (ros-current-pkg-modeline-entry))
 
-(add-to-list 'load-path "~/.emacs.d/yaml-mode")
-(require 'yaml-mode)
-(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
-
-
-; slime / lisp Setup
-;(setq inferior-lisp-program "/usr/bin/sbcl") ; your Lisp system
-;(setq inferior-lisp-program "/home/lars/local/bin/sbcl") ; your Lisp system
-;(add-to-list 'load-path "/home/lars/work/slime/")  ; your SLIME directory
-;(require 'slime)
-;(slime-setup '(slime-fancy slime-asdf slime-indentation slime-ros))
 
 ;;; python
 ;;; Electric Pairs
@@ -251,19 +197,6 @@
 ;; kill-ring <-> x11
 (setq x-select-enable-clipboard t)
 (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
-
-;;(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-;; '(default ((t (:stipple nil :background "black" :foreground "#c0c0c0" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :family "adobe-courier"))))
-;; '(font-latex-subscript-face ((t nil)))
-;; '(font-latex-superscript-face ((t nil)))
-;; '(secondary-selection ((t (:background "paleturquoise" :foreground "black"))))
-;; '(slime-highlight-edits-face ((((class color) (background dark)) (:background "gray15")))))
-
-;; ros config from cram_emacs_repl
 
 (defun ros-package-path (pkg)
   (save-excursion
@@ -324,38 +257,9 @@
 
 (require 'rst)
 (setq auto-mode-alist
-      (append '(("\\.txt$" . rst-mode)
-                ("\\.rst$" . rst-mode)
+      (append '(("\\.rst$" . rst-mode)
                 ("\\.rest$" . rst-mode)) auto-mode-alist))
 
 (put 'downcase-region 'disabled nil)
 
-(require 'generic)
-(define-generic-mode 'arff-file-mode
-  (list ?%)
-  (list "attribute" "relation" "end" "data")
-  '(
-    ("\\('.*'\\)" 1 'font-lock-string-face)    
-    ("^\\@\\S-*\\s-\\(\\S-*\\)" 1 'font-lock-string-face)    
-    ("^\\@.*\\(real\\)" 1 'font-lock-type-face)    
-    ("^\\@.*\\(integer\\)" 1 'font-lock-type-face)    
-    ("^\\@.*\\(numeric\\)" 1 'font-lock-type-face)    
-    ("^\\@.*\\(string\\)" 1 'font-lock-type-face)    
-    ("^\\@.*\\(date\\)" 1 'font-lock-type-face)    
-    ("^\\@.*\\({.*}\\)" 1 'font-lock-type-face)    
-    ("^\\({\\).*\\(}\\)$" (1 'font-lock-reference-face) (2
-'font-lock-reference-face))
-    ("\\(\\?\\)" 1 'font-lock-reference-face)    
-    ("\\(\\,\\)" 1 'font-lock-keyword-face)    
-    ("\\(-?[0-9]+?.?[0-9]+\\)" 1 'font-lock-constant-face)    
-    ("\\(\\@\\)" 1 'font-lock-preprocessor-face)    
-    )
-  (list "\.arff?")
-  (list
-   (function
-    (lambda () 
-      (setq font-lock-defaults (list 'generic-font-lock-defaults nil t ; case
-insensitive
-                                     (list (cons ?* "w") (cons ?- "w"))))
-      (turn-on-font-lock))))
-  "Mode for arff-files.")
+(setq TeX-PDF-mode t)
