@@ -144,17 +144,61 @@
   (add-hook hook (lambda () (flyspell-mode 1))))
 (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
   (add-hook hook (lambda () (flyspell-mode -1))))
-(dolist (hook '(lisp-mode-hook c++-mode-hook python-mode-hook))
-  (add-hook hook (lambda () (flyspell-prog-mode))))
+;;(dolist (hook '(lisp-mode-hook c++-mode-hook python-mode-hook))
+;;  (add-hook hook (lambda () (flyspell-prog-mode))))
 
 ;; Set ispell default dictionary
 (ispell-change-dictionary "american")
 
 ; color scheme
-(require 'color-theme)
-(color-theme-initialize)
-(color-theme-gray30)
+;;(require 'color-theme)
+;;(color-theme-initialize)
+;;(color-theme-gray30)
 ;;(color-theme-hober)
+
+(require 'color-theme)
+(setq color-theme-load-all-themes nil)
+(add-to-list 'load-path "~/.emacs.d/tango")
+
+(require 'color-theme-tangotango)
+
+;; select theme - first list element is for windowing system, second is for console/terminal
+;; Source : http://www.emacswiki.org/emacs/ColorTheme#toc9
+(setq color-theme-choices 
+      '(color-theme-tangotango color-theme-tangotango))
+
+;; default-start
+(funcall (lambda (cols)
+    	   (let ((color-theme-is-global nil))
+    	     (eval 
+    	      (append '(if (window-system))
+    		      (mapcar (lambda (x) (cons x nil)) 
+    			      cols)))))
+    	 color-theme-choices)
+
+;; test for each additional frame or console
+(require 'cl)
+(fset 'test-win-sys 
+      (funcall (lambda (cols)
+    		 (lexical-let ((cols cols))
+    		   (lambda (frame)
+    		     (let ((color-theme-is-global nil))
+		       ;; must be current for local ctheme
+		       (select-frame frame)
+		       ;; test winsystem
+		       (eval 
+			(append '(if (window-system frame)) 
+				(mapcar (lambda (x) (cons x nil)) 
+					cols)))))))
+    	       color-theme-choices ))
+;; hook on after-make-frame-functions
+(add-hook 'after-make-frame-functions 'test-win-sys)
+
+(color-theme-tangotango)
+
+
+
+
 
 
 ; ido mode
@@ -263,3 +307,22 @@
 (put 'downcase-region 'disabled nil)
 
 (setq TeX-PDF-mode t)
+
+(add-to-list 'load-path "~/.emacs.d/highlight-indentation")
+(require 'highlight-indentation) 
+(add-hook 'python-mode-hook 'highlight-indentation-mode)
+
+(set-face-background 'highlight-indentation-face "#404040")
+(set-face-background 'highlight-indentation-current-column-face "#11111") 
+
+(defun aj-toggle-fold ()
+  "Toggle fold all lines larger than indentation on current line"
+  (interactive)
+  (let ((col 1))
+    (save-excursion
+      (back-to-indentation)
+      (setq col (+ 1 (current-column)))
+      (set-selective-display
+       (if selective-display nil (or col 1))))))
+(global-set-key [(M C i)] 'aj-toggle-fold)
+
